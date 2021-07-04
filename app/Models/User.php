@@ -23,6 +23,23 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'is_verified',
+        'is_active',
+        'social_facebook',
+        'social_instagram',
+        'social_whatsapp',
+        'social_twitter',
+        'social_snapchat',
+        'events_hosted',
+        'events_attended',
+        'blocked_by',
+        'blocked',
+        'bio',
+        'date_of_birth',
+        'current_city',
+        'gender',
+        'interest',
+        'profile_image'
     ];
 
     /**
