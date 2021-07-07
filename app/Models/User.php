@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -18,28 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
-        'username',
-        'email',
-        'password',
-        'is_verified',
-        'is_active',
-        'social_facebook',
-        'social_instagram',
-        'social_whatsapp',
-        'social_twitter',
-        'social_snapchat',
-        'events_hosted',
-        'events_attended',
-        'blocked_by',
-        'blocked',
-        'bio',
-        'date_of_birth',
-        'current_city',
-        'gender',
-        'interest',
-        'profile_image'
+        'name', 'email', 'password',
     ];
 
     /**
@@ -48,21 +25,26 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-    public function linkedSocialAccounts()
+    public function getJWTIdentifier()
     {
-        return $this->hasMany(LinkedSocialAccount::class);
+       return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+    public function social()
+    {
+        return $this->hasMany(UserSocial::class, 'user_id', 'id');
+    }
+
+    public function hasSocialLinked($service)
+    {
+        return (bool) $this->social->where('service', $service)->count();
     }
 }
